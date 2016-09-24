@@ -1,0 +1,28 @@
+  .pos 0
+  irmovq stack, %rsp
+  irmovq $8, %r8      #Will be used to iterate through a register
+  call main
+  halt
+
+  main:
+      irmovq $5, %rdi
+
+      rmmovq %rdi, (%rax)
+      mrmovq (%rax), %r9
+
+      irmovq $6, %rdi
+      addq %r8, %rax
+      rmmovq %rdi, (%rax)
+      mrmovq (%rax), %r10
+
+      irmovq $7, %rdi
+      addq %r8, %rax
+      rmmovq %rdi, (%rax)
+      mrmovq (%rax), %r11
+
+      ret
+
+    # this is where the stack starts in memory hex address 200
+  .pos 0x200
+stack:
+      

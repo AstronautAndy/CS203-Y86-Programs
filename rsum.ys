@@ -1,0 +1,46 @@
+# the start point for the program
+# %r8 will be used to store the pointer to the current node
+# %rbx will be used to store the total sum of the program
+
+  .pos 0
+  irmovq stack, %rsp
+  call main
+  halt
+
+#Sample linked list
+	.align 8
+	ele1:
+		.quad 0x00a
+		.quad ele2
+	ele2:
+		.quad 0x0b0
+		.quad ele3
+	ele3:
+		.quad 0xc00
+		.quad 0
+
+main:
+	irmovq $8, %rdi
+	irmovq $0, %rsi
+	irmovq ele1,%rax
+	irmovq ele2,%rcx
+	irmovq ele3,%rdx
+	irmovq $0, %rbx #initial sum value
+	pushq %rax #Push the starting value onto the stack 
+	jmp recurse
+	ret
+
+recurse: 
+	popq %r8
+	mrmovq (%r8), %r9 	#Move the value located in r8 to r9. 
+	addq %r9, %rbx 		#Add r9 to the total sum of the linked list
+	addq %rdi, %r8 		#increment the address of r8 to retrieve the location of the "next" node's address
+	mrmovq (%r8), %r8 	#Retrieve the next node's address
+	pushq %r8 			#Push the next 
+	addq %rsi, %r8 		#Add 0 to r8 in order to have a basis for comparison
+	jne recurse 		#Call this block of code while r8 is not equal to zero.
+
+
+# this is where the stack starts in memory hex address 200
+  .pos 0x200
+stack:

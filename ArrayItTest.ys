@@ -1,0 +1,28 @@
+ #This program works the way I want it to
+
+  .pos 0
+  irmovq stack, %rsp
+  irmovq array, %rax
+  irmovq $8, %r8
+  irmovq $0, %r9
+  call iterate
+  halt
+
+   array:
+    .quad 0xc
+    .quad 0xa
+    .quad 0xd
+    .quad 0xb
+    .quad 0xe
+    .quad 0x0
+
+iterate:
+  addq %r8,%rax     #Increment the index of the array
+  rrmovq %rax,%rbx  #Move value at current  index to a separate address
+  mrmovq (%rbx),%rbx
+  addq %r9,%rbx 
+  jg iterate
+
+# this is where the stack starts in memory hex address 200
+  .pos 0x200
+stack:

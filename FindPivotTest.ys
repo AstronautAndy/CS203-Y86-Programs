@@ -1,0 +1,56 @@
+  #Store the number of times we can add two while counting in %rdx - Increment this value every other iteration
+  #Store the array being used in the recursive statment in %rcx
+  #Store the value of the de-referenced address in %rdi
+
+  .pos 0
+  irmovq stack, %rsp
+  irmovq $1, %r8		#r8 Will be used to increment the address the program is "looking at" in a register
+  irmovq $0, %r9		#r9 Will be used for the value to 0 comparison
+  irmovq $0, %r10		#r10 Will be set to 0 and 1 every iteration
+  irmovq $8, %r11
+  call main
+  halt
+
+   array:
+    .quad 0xc
+    .quad 0xa
+    .quad 0xd
+    .quad 0xe
+    .quad 0xf
+    .quad 0x3 
+    .quad 0x2
+    .quad 0x5
+    .quad 0x7
+    .quad 0x4
+    .quad 0x0
+
+   main:
+   	irmovq array, %rax
+   	pushq %rax			#Place pointer to array in the stack
+   	irmovq $0, %rdx	#initialize the count value to 0
+   	jmp setPivot
+
+   setPivot:
+   		
+   		popq %rcx 
+   		mrmovq (%rcx), %rdi
+   		addq %r9, %rdi
+   		je stop
+   		addq %r11, %rcx #Increment the index of the register to the next address space
+   		pushq %rcx		#Place the pointer to the updated current address back into the stack
+   		addq %r9, %r10	#Used to compare the switch to 0
+   		jne	switch 		#Condition testing whether the counter is 1 or 0. If 1, jump to "switch"
+   		addq %r8, %r10	#Otherwise, increment the counter by 1 and perform recursive call
+   		jmp setPivot	#Recursively call the function
+
+   	switch:
+   		irmovq $0, %r10	#Set switch back to 0
+   		addq %r8, %rdx	#Increment the number of times we've been able to add by 2
+   		jmp setPivot 	#Recursive Call
+
+   	stop:
+   		ret
+
+    # this is where the stack starts in memory hex address 200
+  .pos 0x200
+stack:
